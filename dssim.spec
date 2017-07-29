@@ -66,7 +66,8 @@ CFLAGS="%{rpmcflags} %{rpmcppflags}" \
 LDFLAGS="%{rpmldflags}" \
 meson build \
 	--buildtype=plain \
-	--prefix=%{_prefix}
+	--prefix=%{_prefix} \
+	--libdir=%{_libdir}
 
 ninja -C build -v
 
