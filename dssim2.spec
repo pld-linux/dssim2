@@ -1,20 +1,19 @@
-# TODO: build without network (crates downloading)
 Summary:	Tool to compute (dis)similarity between two or more images
 Summary(pl.UTF-8):	Narzędzie do obliczania (nie)podobieństwa dwóch lub większej liczby obrazów
 Name:		dssim2
-Version:	2.10.0
+Version:	3.0.2
 Release:	1
 License:	AGPL v3+ or commercial
 Group:		Applications/Graphics
 #Source0Download: https://github.com/pornel/dssim/releases
 Source0:	https://github.com/pornel/dssim/archive/%{version}/dssim-%{version}.tar.gz
-# Source0-md5:	2f9a4710ca6f93ed1f47288e082141ae
+# Source0-md5:	fdeb8d78e83789252c0e1284e318b303
 # cd dssim-%{version}
 # cargo vendor
 # cd ..
-# tar cJf dssim-creates-%{version}.tar.xz dssim-%{version}/{vendor,Cargo.lock}
-Source1:	dssim-crates-%{version}.tar.xz
-# Source1-md5:	5fea3ede16b683e298a47ccfcae0c746
+# tar cJf dssim-vendor-%{version}.tar.xz dssim-%{version}/{vendor,Cargo.lock}
+Source1:	dssim-vendor-%{version}.tar.xz
+# Source1-md5:	09823b55783fe6efa146550ba92030a5
 URL:		https://kornel.ski/dssim
 BuildRequires:	cargo
 BuildRequires:	rust
@@ -62,9 +61,10 @@ rm -rf $RPM_BUILD_ROOT
 
 export CARGO_HOME="$(pwd)/.cargo"
 
-cargo -v install --frozen --root $RPM_BUILD_ROOT%{_prefix}
+cargo -v install --frozen --path . --root $RPM_BUILD_ROOT%{_prefix}
 
 %{__rm} $RPM_BUILD_ROOT%{_prefix}/.crates.toml
+%{__rm} $RPM_BUILD_ROOT%{_prefix}/.crates2.json
 
 %clean
 rm -rf $RPM_BUILD_ROOT
