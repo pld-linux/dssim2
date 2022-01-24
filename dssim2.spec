@@ -22,6 +22,8 @@ BuildRequires:	nasm
 %endif
 BuildRequires:	rpmbuild(macros) >= 2.004
 BuildRequires:	rust
+BuildRequires:	tar >= 1:1.22
+BuildRequires:	xz
 Obsoletes:	dssim < 2
 ExclusiveArch:	%{x8664} %{ix86} x32 aarch64 armv6hl armv7hl armv7hnl
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
