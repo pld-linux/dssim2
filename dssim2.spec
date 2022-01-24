@@ -20,6 +20,7 @@ BuildRequires:	cargo
 %ifarch %{ix86} %{x8664} x32
 BuildRequires:	nasm
 %endif
+BuildRequires:	rpmbuild(macros) >= 2.004
 BuildRequires:	rust
 Obsoletes:	dssim < 2
 ExclusiveArch:	%{x8664} %{ix86} x32 aarch64 armv6hl armv7hl armv7hnl
