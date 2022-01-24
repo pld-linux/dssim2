@@ -1,0 +1,24 @@
+--- dssim-3.0.2/vendor/nasm-rs/src/lib.rs.orig	2021-12-28 19:48:17.000000000 +0100
++++ dssim-3.0.2/vendor/nasm-rs/src/lib.rs	2022-01-24 11:37:55.316183333 +0100
+@@ -38,7 +38,13 @@
+     }
+ 
+     match parts[0] {
+-        "x86_64" => x86_64_triple(parts[2]),
++        "x86_64" => {
++            if parts.len() == 4 && parts[3] == "gnux32" {
++                ("-felfx32", "-gdwarf")
++            } else {
++                x86_64_triple(parts[2])
++            }
++        },
+         "x86" | "i386" | "i586" | "i686" => x86_triple(parts[2]),
+         _ => ("", "-g"),
+     }
+--- dssim-3.0.2/vendor/nasm-rs/.cargo-checksum.json.orig	2021-12-28 19:48:17.000000000 +0100
++++ dssim-3.0.2/vendor/nasm-rs/.cargo-checksum.json	2022-01-24 11:48:41.842588064 +0100
+@@ -1 +1 @@
+-{"files":{"Cargo.toml":"53fc8cb5fa63d5c4187cacbeab0101393e3e794a197c0479542415cdd3e2126e","LICENSE-APACHE":"a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2","LICENSE-MIT":"c9a75f18b9ab2927829a208fc6aa2cf4e63b8420887ba29cdb265d6619ae82d5","README.markdown":"b895ae35bab26ae62fcc9db7023980479f31a36bb91ba2ca31ed723db2b32006","src/lib.rs":"f2841bd463deb38bd169d561a67813b83144fe81c91ce26ccf521e8f0ee7f24f"},"package":"a76f43faa0d13f9c89f72e1972446d558f003cfffb80eb16bb444231de1becd1"}
+\ No newline at end of file
++{"files":{"Cargo.toml":"53fc8cb5fa63d5c4187cacbeab0101393e3e794a197c0479542415cdd3e2126e","LICENSE-APACHE":"a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2","LICENSE-MIT":"c9a75f18b9ab2927829a208fc6aa2cf4e63b8420887ba29cdb265d6619ae82d5","README.markdown":"b895ae35bab26ae62fcc9db7023980479f31a36bb91ba2ca31ed723db2b32006","src/lib.rs":"ffb5aecf20ed537463e5db3f146885aee83528985c292d67a30953fb7263b9d7"},"package":"a76f43faa0d13f9c89f72e1972446d558f003cfffb80eb16bb444231de1becd1"}
+\ No newline at end of file

@@ -14,6 +14,7 @@ Source0:	https://github.com/pornel/dssim/archive/%{version}/dssim-%{version}.tar
 # tar cJf dssim-vendor-%{version}.tar.xz dssim-%{version}/{vendor,Cargo.lock}
 Source1:	dssim-vendor-%{version}.tar.xz
 # Source1-md5:	09823b55783fe6efa146550ba92030a5
+Patch0:		nasm-rs-x32.patch
 URL:		https://kornel.ski/dssim
 BuildRequires:	cargo
 %ifarch %{ix86} %{x8664} x32
@@ -40,6 +41,7 @@ rozdzielczościami.
 
 %prep
 %setup -q -n dssim-%{version} -b1
+%patch0 -p1
 
 # use our offline registry
 export CARGO_HOME="$(pwd)/.cargo"
