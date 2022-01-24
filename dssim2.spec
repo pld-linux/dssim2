@@ -16,6 +16,9 @@ Source1:	dssim-vendor-%{version}.tar.xz
 # Source1-md5:	09823b55783fe6efa146550ba92030a5
 URL:		https://kornel.ski/dssim
 BuildRequires:	cargo
+%ifarch %{ix86} %{x8664} x32
+BuildRequires:	nasm
+%endif
 BuildRequires:	rust
 Obsoletes:	dssim < 2
 ExclusiveArch:	%{x8664} %{ix86} x32 aarch64 armv6hl armv7hl armv7hnl
