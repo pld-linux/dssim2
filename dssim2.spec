@@ -2,7 +2,7 @@ Summary:	Tool to compute (dis)similarity between two or more images
 Summary(pl.UTF-8):	Narzędzie do obliczania (nie)podobieństwa dwóch lub większej liczby obrazów
 Name:		dssim2
 Version:	3.0.2
-Release:	1
+Release:	2
 License:	AGPL v3+ or commercial
 Group:		Applications/Graphics
 #Source0Download: https://github.com/pornel/dssim/releases
@@ -24,7 +24,6 @@ BuildRequires:	rpmbuild(macros) >= 2.004
 BuildRequires:	rust
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	xz
-Obsoletes:	dssim < 2
 ExclusiveArch:	%{x8664} %{ix86} x32 aarch64 armv6hl armv7hl armv7hnl
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
