@@ -1,20 +1,19 @@
 Summary:	Tool to compute (dis)similarity between two or more images
 Summary(pl.UTF-8):	Narzędzie do obliczania (nie)podobieństwa dwóch lub większej liczby obrazów
 Name:		dssim2
-Version:	3.0.2
-Release:	2
+Version:	3.2.0
+Release:	1
 License:	AGPL v3+ or commercial
 Group:		Applications/Graphics
 #Source0Download: https://github.com/pornel/dssim/releases
 Source0:	https://github.com/pornel/dssim/archive/%{version}/dssim-%{version}.tar.gz
-# Source0-md5:	fdeb8d78e83789252c0e1284e318b303
+# Source0-md5:	64e777cdd859a9a556526a2ec69aef9b
 # cd dssim-%{version}
 # cargo vendor
 # cd ..
 # tar cJf dssim-vendor-%{version}.tar.xz dssim-%{version}/{vendor,Cargo.lock}
 Source1:	dssim-vendor-%{version}.tar.xz
-# Source1-md5:	09823b55783fe6efa146550ba92030a5
-Patch0:		nasm-rs-x32.patch
+# Source1-md5:	96943aeffac9afe4f4ab4198d04f3e0b
 URL:		https://kornel.ski/dssim
 BuildRequires:	cargo
 %ifarch %{ix86} %{x8664} x32
@@ -44,7 +43,6 @@ rozdzielczościami.
 
 %prep
 %setup -q -n dssim-%{version} -b1
-%patch0 -p1
 
 # use our offline registry
 export CARGO_HOME="$(pwd)/.cargo"
