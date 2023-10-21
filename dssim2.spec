@@ -1,21 +1,28 @@
+# TODO: system aom, lcms2
+#
+# Conditional build:
+%bcond_without	avif	# AVIF support (internal aom)
+%bcond_without	webp	# WEBP support
+
 Summary:	Tool to compute (dis)similarity between two or more images
 Summary(pl.UTF-8):	Narzędzie do obliczania (nie)podobieństwa dwóch lub większej liczby obrazów
 Name:		dssim2
-Version:	3.2.0
+Version:	3.2.3
 Release:	1
 License:	AGPL v3+ or commercial
 Group:		Applications/Graphics
 #Source0Download: https://github.com/pornel/dssim/releases
 Source0:	https://github.com/pornel/dssim/archive/%{version}/dssim-%{version}.tar.gz
-# Source0-md5:	64e777cdd859a9a556526a2ec69aef9b
+# Source0-md5:	4226a24d7728b77cfb490b03831d7f07
 # cd dssim-%{version}
 # cargo vendor
 # cd ..
 # tar cJf dssim-vendor-%{version}.tar.xz dssim-%{version}/{vendor,Cargo.lock}
 Source1:	dssim-vendor-%{version}.tar.xz
-# Source1-md5:	96943aeffac9afe4f4ab4198d04f3e0b
+# Source1-md5:	02c25d610a0644876e4588daa6a42b85
 URL:		https://kornel.ski/dssim
 BuildRequires:	cargo
+%{?with_webp:BuildRequires:	libwebp-devel}
 %ifarch %{ix86} %{x8664} x32
 BuildRequires:	nasm
 %endif
@@ -60,7 +67,8 @@ EOF
 %build
 export CARGO_HOME="$(pwd)/.cargo"
 
-%cargo_build --frozen
+%cargo_build --frozen \
+	--features "%{?with_avif:avif} %{?with_webp:webp}"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -68,6 +76,7 @@ rm -rf $RPM_BUILD_ROOT
 export CARGO_HOME="$(pwd)/.cargo"
 
 %cargo_install --frozen \
+	--features "%{?with_avif:avif} %{?with_webp:webp}" \
 	--path . \
 	--root $RPM_BUILD_ROOT%{_prefix}
 
