@@ -1,7 +1,6 @@
-# TODO: system aom, lcms2
 #
 # Conditional build:
-%bcond_without	avif	# AVIF support (internal aom)
+%bcond_without	aom	# AVIF support via AOM
 %bcond_without	webp	# WEBP support
 
 Summary:	Tool to compute (dis)similarity between two or more images
@@ -21,15 +20,20 @@ Source0:	https://github.com/pornel/dssim/archive/%{version}/dssim-%{version}.tar
 Source1:	dssim-vendor-%{version}.tar.xz
 # Source1-md5:	02c25d610a0644876e4588daa6a42b85
 URL:		https://kornel.ski/dssim
+%{?with_aom:BuildRequires:	aom-devel >= 3.3.0}
 BuildRequires:	cargo
+BuildRequires:	lcms2-devel >= 2.13.1
 %{?with_webp:BuildRequires:	libwebp-devel}
 %ifarch %{ix86} %{x8664} x32
 BuildRequires:	nasm
 %endif
 BuildRequires:	rpmbuild(macros) >= 2.004
 BuildRequires:	rust
+BuildRequires:	sed >= 4.0
 BuildRequires:	tar >= 1:1.22
 BuildRequires:	xz
+%{?with_aom:Requires:	aom >= 3.3.0}
+Requires:	lcms2 >= 2.13.1
 Obsoletes:	dssim < 2
 ExclusiveArch:	%{x8664} %{ix86} x32 aarch64 armv6hl armv7hl armv7hnl
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -64,19 +68,32 @@ replace-with = 'vendored-sources'
 directory = '$PWD/vendor'
 EOF
 
+# shared aom (also fixes x32 build, builtin aom linking fails)
+%{__sed} -i -e 's/cargo:rustc-link-lib=static=aom/cargo:rustc-link-lib=aom/' vendor/libaom-sys/build.rs
+%{__sed} -i -e 's/"build.rs":"e20f251c0f9cbe97b298d4575259f9583633fb9526c61c52cc9abe5a94769284"/"build.rs":"b9ce3f79373bed7310a8da968620b3d97f907fd54e266a7f38f5f4090a007ea9"/' vendor/libaom-sys/.cargo-checksum.json
+
+# shared lcms2
+%{__sed} -i -e '/^load_image = / s/, features = \["lcms2-static"\]//' Cargo.toml
+
 %build
 export CARGO_HOME="$(pwd)/.cargo"
+export LIB_AOM_INCLUDE_PATH=%{_includedir}
+export LIB_AOM_PKG_CONFIG_PATH=%{_pkgconfigdir}
+export LIB_AOM_STATIC_LIB_PATH=%{_libdir}
 
 %cargo_build --frozen \
-	--features "%{?with_avif:avif} %{?with_webp:webp}"
+	--features "%{?with_aom:avif} %{?with_webp:webp}"
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
 export CARGO_HOME="$(pwd)/.cargo"
+export LIB_AOM_INCLUDE_PATH=%{_includedir}
+export LIB_AOM_PKG_CONFIG_PATH=%{_pkgconfigdir}
+export LIB_AOM_STATIC_LIB_PATH=%{_libdir}
 
 %cargo_install --frozen \
-	--features "%{?with_avif:avif} %{?with_webp:webp}" \
+	--features "%{?with_aom:avif} %{?with_webp:webp}" \
 	--path . \
 	--root $RPM_BUILD_ROOT%{_prefix}
 
