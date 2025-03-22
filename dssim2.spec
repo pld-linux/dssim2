@@ -22,6 +22,7 @@ Source1:	dssim-vendor-%{version}.tar.xz
 URL:		https://kornel.ski/dssim
 %{?with_aom:BuildRequires:	aom-devel >= 3.10.0}
 BuildRequires:	cargo
+BuildRequires:	cargo-c
 BuildRequires:	lcms2-devel >= 2.16
 %{?with_webp:BuildRequires:	libwebp-devel}
 %ifarch %{ix86} %{x8664} x32
@@ -52,6 +53,43 @@ obrazów PNG przy użyciu algorytmu przybliżającego ludzkie widzenie.
 Porównywanie jest wykonywane algorytmem SSIM z wieloma ważonymi
 rozdzielczościami.
 
+%package libs
+Summary:	DSSIM shared library
+Summary(pl.UTF-8):	Biblioteka współdzielona DSSIM
+Group:		Libraries
+
+%description libs
+DSSIM shared library to compute (dis)similarity between two or more
+images.
+
+%description libs -l pl.UTF-8
+Biblioteka współdzielona DSSIM do obliczania (nie)podobieństwa dwóch
+lub większej liczby obrazów.
+
+%package devel
+Summary:	Header file for DSSIM library
+Summary(pl.UTF-8):	Plik nagłówkowy biblioteki DSSIM
+Group:		Development/Libraries
+Requires:	%{name}-libs = %{version}-%{release}
+
+%description devel
+Header file for DSSIM library.
+
+%description devel -l pl.UTF-8
+Plik nagłówkowy biblioteki DSSIM.
+
+%package static
+Summary:	Static DSSIM library
+Summary(pl.UTF-8):	Statyczna biblioteka DSSIM
+Group:		Development/Libraries
+Requires:	%{name}-devel = %{version}-%{release}
+
+%description static
+Static DSSIM library.
+
+%description static -l pl.UTF-8
+Statyczna biblioteka DSSIM.
+
 %prep
 %setup -q -n dssim-%{version} -b1
 
@@ -59,7 +97,7 @@ rozdzielczościami.
 export CARGO_HOME="$(pwd)/.cargo"
 
 mkdir -p "$CARGO_HOME"
-cat >.cargo/config <<EOF
+cat >.cargo/config.toml <<EOF
 [source.crates-io]
 registry = 'https://github.com/rust-lang/crates.io-index'
 replace-with = 'vendored-sources'
@@ -84,6 +122,14 @@ export LIB_AOM_STATIC_LIB_PATH=%{_libdir}
 %cargo_build --frozen \
 	--features "%{?with_aom:avif} %{?with_webp:webp}"
 
+cd dssim-core
+%{__cargo} %{__cargo_common_opts} cbuild \
+	%{!?debug:--release} \
+	--target %{rust_target} \
+	--target-dir %{cargo_targetdir} \
+	--prefix %{_prefix} \
+	--libdir %{_libdir}
+
 %install
 rm -rf $RPM_BUILD_ROOT
 
@@ -97,6 +143,15 @@ export LIB_AOM_STATIC_LIB_PATH=%{_libdir}
 	--path . \
 	--root $RPM_BUILD_ROOT%{_prefix}
 
+cd dssim-core
+%{__cargo} %{__cargo_common_opts} cinstall \
+	--destdir $RPM_BUILD_ROOT \
+	%{!?debug:--release} \
+	--target %{rust_target} \
+	--target-dir %{cargo_targetdir} \
+	--prefix %{_prefix} \
+	--libdir %{_libdir}
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -104,3 +159,18 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc README.md
 %attr(755,root,root) %{_bindir}/dssim
+
+%files libs
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libdssim.so.*.*.*
+%ghost %{_libdir}/libdssim.so.3
+
+%files devel
+%defattr(644,root,root,755)
+%{_libdir}/libdssim.so
+%{_includedir}/dssim.h
+%{_pkgconfigdir}/dssim.pc
+
+%files static
+%defattr(644,root,root,755)
+%{_libdir}/libdssim.a
