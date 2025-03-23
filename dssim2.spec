@@ -57,6 +57,8 @@ rozdzielczościami.
 Summary:	DSSIM shared library
 Summary(pl.UTF-8):	Biblioteka współdzielona DSSIM
 Group:		Libraries
+# not yet, library name differs; kill all users first
+#Obsoletes:	dssim-libs < 2
 
 %description libs
 DSSIM shared library to compute (dis)similarity between two or more
@@ -71,6 +73,7 @@ Summary:	Header file for DSSIM library
 Summary(pl.UTF-8):	Plik nagłówkowy biblioteki DSSIM
 Group:		Development/Libraries
 Requires:	%{name}-libs = %{version}-%{release}
+Obsoletes:	dssim-devel < 2
 
 %description devel
 Header file for DSSIM library.
